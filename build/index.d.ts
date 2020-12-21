@@ -1,2 +1,3 @@
 import TestComponent from "./TestComponent/TestComponent";
-export { TestComponent };
+import TestMUIButton from "./TestMUIButton";
+export { TestComponent, TestMUIButton };
