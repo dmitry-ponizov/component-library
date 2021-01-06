@@ -1,13 +1,14 @@
-// @ts-nocheck
 import * as React from "react";
 import { useStyles } from "./styles";
 import { Provider as StoreProvider } from "react-redux";
-import configureStore from "../stores";
 import ProjectDetails from "./components/ProjectDetails";
+import exampleReducer from "../store/example/reducer";
+import { createStore } from "redux";
 
-const store = configureStore();
+const store = createStore(exampleReducer);
 
 const DocumentAssetManagement = () => {
+  console.log(store);
   const classes = useStyles();
   return (
     <StoreProvider store={store}>
