@@ -2203,8 +2203,7 @@ styleInject(css_248z);
 var TestComponent = function (_a) {
     var theme = _a.theme;
     return (react.createElement("div", { "data-testid": "test-component", className: "test-component test-component-" + theme },
-        react.createElement("h1", { className: "heading" }, "I'm the test cdomponent"),
-        react.createElement("h2", null, "Made with love by Harvey")));
+        react.createElement("h1", { className: "heading" }, "I'm the test componentddd")));
 };
 
 var useStyles = makeStyles(function (theme) {
