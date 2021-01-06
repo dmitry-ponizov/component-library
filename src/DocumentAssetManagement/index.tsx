@@ -1,3 +1,4 @@
+// @ts-nocheck
 import * as React from "react";
 import { useStyles } from "./styles";
 import { Provider as StoreProvider } from "react-redux";
