@@ -8,6 +8,7 @@ const ProjectDetails = () => {
   useEffect(() => {
     dispatch(getUserDataRequestActionCreator());
   }, []);
+
   return (
     <div>
       Hello from project details component -----{" "}
