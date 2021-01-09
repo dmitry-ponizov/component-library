@@ -1,2 +1,2 @@
-declare const ProjectDetails: (props: any) => JSX.Element;
+declare const ProjectDetails: () => JSX.Element;
 export default ProjectDetails;

@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserDataRequestActionCreator } from "../../../store/redux-og";
 
-const ProjectDetails = (props: any) => {
+const ProjectDetails = () => {
   const user = useSelector((state: any) => state.user.user);
-
+  const dispatch = useDispatch();
   useEffect(() => {
-    props.dispatch(getUserDataRequestActionCreator());
+    console.log("hello");
   }, []);
 
   return (
