@@ -42,7 +42,6 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6"
   },
-  "peerDependencies": {},
   "scripts": {
     "build": "rollup -c",
     "storybook": "start-storybook -p 6006",
