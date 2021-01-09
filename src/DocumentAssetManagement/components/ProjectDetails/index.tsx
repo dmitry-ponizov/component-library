@@ -4,6 +4,10 @@ import { getUserDataRequestActionCreator } from "../../../store/redux-og";
 
 const ProjectDetails = () => {
   const user = useSelector((state: any) => state.user.user);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getUserDataRequestActionCreator());
+  }, [dispatch, getUserDataRequestActionCreator]);
 
   return (
     <div>

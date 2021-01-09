@@ -1,7 +1,7 @@
 import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles } from '@material-ui/core';
 import { makeStyles as makeStyles$1, createStyles as createStyles$1 } from '@material-ui/core/styles';
-import { useSelector, Provider } from 'react-redux';
+import { useSelector, useDispatch, Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { all, takeLatest, put, call } from 'redux-saga/effects';
 import createSagaMiddleware from 'redux-saga';
@@ -2250,13 +2250,6 @@ var useStyles$1 = makeStyles$1(function (theme) {
             _a),
     });
 });
-
-var ProjectDetails = function () {
-    var user = useSelector(function (state) { return state.user.user; });
-    return (react.createElement("div", null,
-        "Hello from project details component -----",
-        " ", user.firstname + " " + user.lastname + " "));
-};
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -19503,6 +19496,11 @@ function apiMiddleware(_a) {
 var GET_USER_DATA_REQUEST = "GET_USER_DATA_REQUEST";
 var GET_USER_DATA_SUCCESS = "GET_USER_DATA_SUCCESS";
 var GET_USER_DATA_FAILURE = "GET_USER_DATA_FAILURE";
+var getUserDataRequestActionCreator = function () {
+    return {
+        type: GET_USER_DATA_REQUEST,
+    };
+};
 var getUserDataSuccessActionCreator = function (payload) {
     return {
         type: GET_USER_DATA_SUCCESS,
@@ -19595,6 +19593,17 @@ function rootSaga() {
 /// Store
 var store = createStore(reducers, composeWithDevTools(applyMiddleware(sagaMiddleware, logger)));
 sagaMiddleware.run(rootSaga);
+
+var ProjectDetails = function () {
+    var user = useSelector(function (state) { return state.user.user; });
+    var dispatch = useDispatch();
+    react.useEffect(function () {
+        dispatch(getUserDataRequestActionCreator());
+    }, [dispatch, getUserDataRequestActionCreator]);
+    return (react.createElement("div", null,
+        "Hello from project details component -----",
+        " ", user.firstname + " " + user.lastname + " "));
+};
 
 var DocumentAssetManagement = function () {
     var classes = useStyles$1();
