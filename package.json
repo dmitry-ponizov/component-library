@@ -29,9 +29,7 @@
     "rollup-plugin-typescript2": "^0.27.3",
     "sass-loader": "^10.0.3",
     "ts-jest": "^26.4.1",
-    "typescript": "^4.0.3"
-  },
-  "peerDependencies": {
+    "typescript": "^4.0.3",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.54",
@@ -44,6 +42,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6"
   },
+  "peerDependencies": {},
   "scripts": {
     "build": "rollup -c",
     "storybook": "start-storybook -p 6006",
