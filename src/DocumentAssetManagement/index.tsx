@@ -2,13 +2,9 @@ import * as React from "react";
 import { useStyles } from "./styles";
 import { Provider as StoreProvider } from "react-redux";
 import ProjectDetails from "./components/ProjectDetails";
-import exampleReducer from "../store/example/reducer";
-import { createStore } from "redux";
-
-const store = createStore(exampleReducer);
+import store from "../store/redux-og";
 
 const DocumentAssetManagement = () => {
-  console.log(store);
   const classes = useStyles();
   return (
     <StoreProvider store={store}>
