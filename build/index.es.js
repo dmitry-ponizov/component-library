@@ -1,7 +1,7 @@
 import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles } from '@material-ui/core';
 import { makeStyles as makeStyles$1, createStyles as createStyles$1 } from '@material-ui/core/styles';
-import { useSelector, useDispatch, Provider } from 'react-redux';
+import { useSelector, Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { all, takeLatest, put, call } from 'redux-saga/effects';
 import createSagaMiddleware from 'redux-saga';
@@ -19594,23 +19594,22 @@ function rootSaga() {
 var store = createStore(reducers, composeWithDevTools(applyMiddleware(sagaMiddleware, logger)));
 sagaMiddleware.run(rootSaga);
 
-var ProjectDetails = function () {
+var ProjectDetails = function (props) {
     var user = useSelector(function (state) { return state.user.user; });
-    var dispatch = useDispatch();
     react.useEffect(function () {
-        dispatch(getUserDataRequestActionCreator());
-    }, [dispatch, getUserDataRequestActionCreator]);
+        props.dispatch(getUserDataRequestActionCreator());
+    }, []);
     return (react.createElement("div", null,
         "Hello from project details component -----",
         " ", user.firstname + " " + user.lastname + " "));
 };
 
-var DocumentAssetManagement = function () {
+var DocumentAssetManagement = function (props) {
     var classes = useStyles$1();
     return (react.createElement(Provider, { store: store },
         react.createElement("section", { className: classes.root, id: "mainAuth" },
             "Hello from DAM",
-            react.createElement(ProjectDetails, null))));
+            react.createElement(ProjectDetails, { dispatch: props.dispatch }))));
 };
 
 export { DocumentAssetManagement, TestComponent, TestMUIButton };
