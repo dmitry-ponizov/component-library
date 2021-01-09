@@ -1,8 +1,9 @@
 import { combineReducers, createStore, applyMiddleware, compose } from "redux";
-import { takeLatest, all, delay } from "redux-saga/effects";
+import { takeLatest, all, call, put } from "redux-saga/effects";
 import createSagaMiddleware from "redux-saga";
 import logger from "redux-logger";
 import { composeWithDevTools } from "redux-devtools-extension";
+import apiMiddleware from "../services/api_middleware";
 
 // constants
 const GET_USER_DATA_REQUEST = "GET_USER_DATA_REQUEST";
@@ -128,17 +129,22 @@ const reducers = combineReducers({
 // Saga
 const sagaMiddleware = createSagaMiddleware();
 
-function* getUserData() {
+interface IApi {
+  context: unknown;
+  fn: (this: unknown, ...args: any[]) => any;
+}
+export function* getUserData(api: any) {
   try {
-    yield delay(10000);
-    console.log("sdfsdf");
+    const { data } = yield call(api, {
+      url: "/user",
+    });
+    yield put(getUserDataSuccessActionCreator({ ...data, id: data.user_id }));
   } catch (e) {
-    console.log(e.message);
+    yield put(getUserDataFailureActionCreator(e));
   }
 }
-
 function* rootSaga() {
-  yield all([takeLatest(GET_USER_DATA_REQUEST, getUserData)]);
+  yield all([takeLatest(GET_USER_DATA_REQUEST, getUserData, apiMiddleware)]);
 }
 
 /// Store

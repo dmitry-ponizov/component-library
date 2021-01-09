@@ -42,6 +42,9 @@ export declare const getUserDataFailureActionCreator: ({ error, }: {
 }) => GetUserDataFailureActionType;
 declare type UserActionTypes = GetUserDataRequestActionType | GetUserDataSuccessActionType | GetUserDataFailureActionType;
 export declare const userReducer: (state: IUserState, action: UserActionTypes) => IUserState;
+export declare function getUserData(api: any): Generator<import("redux-saga/effects").CallEffect<unknown> | import("redux-saga/effects").PutEffect<GetUserDataSuccessActionType> | import("redux-saga/effects").PutEffect<GetUserDataFailureActionType>, void, {
+    data: any;
+}>;
 declare const store: import("redux").Store<import("redux").CombinedState<{
     user: IUserState;
 }>, import("redux").AnyAction> & {
