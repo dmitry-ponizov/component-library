@@ -1,2 +1,2 @@
-declare const DocumentAssetManagement: (props: any) => JSX.Element;
+declare const DocumentAssetManagement: () => JSX.Element;
 export default DocumentAssetManagement;

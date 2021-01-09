@@ -2264,7 +2264,6 @@ var useStyles$1 = styles.makeStyles(function (theme) {
 
 var ProjectDetails = function () {
     var user = reactRedux.useSelector(function (state) { return state.user.user; });
-    var dispatch = reactRedux.useDispatch();
     react.useEffect(function () {
         console.log("hello");
     }, []);
@@ -19611,12 +19610,12 @@ function rootSaga() {
 var store = redux.createStore(reducers, reduxDevtoolsExtension.composeWithDevTools(redux.applyMiddleware(sagaMiddleware, logger__default['default'])));
 sagaMiddleware.run(rootSaga);
 
-var DocumentAssetManagement = function (props) {
+var DocumentAssetManagement = function () {
     var classes = useStyles$1();
     return (react.createElement(reactRedux.Provider, { store: store },
         react.createElement("section", { className: classes.root, id: "mainAuth" },
             "Hello from DAM",
-            react.createElement(ProjectDetails, { dispatch: props.dispatch }))));
+            react.createElement(ProjectDetails, null))));
 };
 
 exports.DocumentAssetManagement = DocumentAssetManagement;

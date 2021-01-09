@@ -1,7 +1,7 @@
 import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles } from '@material-ui/core';
 import { makeStyles as makeStyles$1, createStyles as createStyles$1 } from '@material-ui/core/styles';
-import { useSelector, useDispatch, Provider } from 'react-redux';
+import { useSelector, Provider } from 'react-redux';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { all, takeLatest, put, call } from 'redux-saga/effects';
 import createSagaMiddleware from 'redux-saga';
@@ -2253,7 +2253,6 @@ var useStyles$1 = makeStyles$1(function (theme) {
 
 var ProjectDetails = function () {
     var user = useSelector(function (state) { return state.user.user; });
-    var dispatch = useDispatch();
     react.useEffect(function () {
         console.log("hello");
     }, []);
@@ -19600,12 +19599,12 @@ function rootSaga() {
 var store = createStore(reducers, composeWithDevTools(applyMiddleware(sagaMiddleware, logger)));
 sagaMiddleware.run(rootSaga);
 
-var DocumentAssetManagement = function (props) {
+var DocumentAssetManagement = function () {
     var classes = useStyles$1();
     return (react.createElement(Provider, { store: store },
         react.createElement("section", { className: classes.root, id: "mainAuth" },
             "Hello from DAM",
-            react.createElement(ProjectDetails, { dispatch: props.dispatch }))));
+            react.createElement(ProjectDetails, null))));
 };
 
 export { DocumentAssetManagement, TestComponent, TestMUIButton };
