@@ -2262,16 +2262,6 @@ var useStyles$1 = styles.makeStyles(function (theme) {
     });
 });
 
-var ProjectDetails = function () {
-    var user = reactRedux.useSelector(function (state) { return state.user.user; });
-    react.useEffect(function () {
-        console.log("hello");
-    }, []);
-    return (react.createElement("div", null,
-        "Hello from project details component -----",
-        " ", user.firstname + " " + user.lastname + " "));
-};
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -19517,6 +19507,11 @@ function apiMiddleware(_a) {
 var GET_USER_DATA_REQUEST = "GET_USER_DATA_REQUEST";
 var GET_USER_DATA_SUCCESS = "GET_USER_DATA_SUCCESS";
 var GET_USER_DATA_FAILURE = "GET_USER_DATA_FAILURE";
+var getUserDataRequestActionCreator = function () {
+    return {
+        type: GET_USER_DATA_REQUEST,
+    };
+};
 var getUserDataSuccessActionCreator = function (payload) {
     return {
         type: GET_USER_DATA_SUCCESS,
@@ -19609,6 +19604,15 @@ function rootSaga() {
 /// Store
 var store = redux.createStore(reducers, reduxDevtoolsExtension.composeWithDevTools(redux.applyMiddleware(sagaMiddleware, logger__default['default'])));
 sagaMiddleware.run(rootSaga);
+
+var ProjectDetails = function () {
+    var user = reactRedux.useSelector(function (state) { return state.user.user; });
+    var dispatch = reactRedux.useDispatch();
+    dispatch(getUserDataRequestActionCreator());
+    return (react.createElement("div", null,
+        "Hello from project details component -----",
+        " ", user.firstname + " " + user.lastname + " "));
+};
 
 var DocumentAssetManagement = function () {
     var classes = useStyles$1();
