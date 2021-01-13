@@ -7,6 +7,15 @@ var reactRedux = require('react-redux')
 var toolkit = require('@reduxjs/toolkit')
 var reselect = require('reselect')
 var reactI18next = require('react-i18next')
+var core = require('@material-ui/core')
+var ErrorOutlineIcon = require('@material-ui/icons/ErrorOutline')
+var Typography = require('@material-ui/core/Typography')
+var TableCell = require('@material-ui/core/TableCell')
+var TableRow = require('@material-ui/core/TableRow')
+var TableHead = require('@material-ui/core/TableHead')
+var Checkbox = require('@material-ui/core/Checkbox')
+var TableSortLabel = require('@material-ui/core/TableSortLabel')
+var IndeterminateCheckBoxIcon = require('@material-ui/icons/IndeterminateCheckBox')
 var styles = require('@material-ui/core/styles')
 var effects = require('redux-saga/effects')
 var axios = require('axios')
@@ -22,6 +31,14 @@ function _interopDefaultLegacy(e) {
 }
 
 var React__default = /*#__PURE__*/ _interopDefaultLegacy(React)
+var ErrorOutlineIcon__default = /*#__PURE__*/ _interopDefaultLegacy(ErrorOutlineIcon)
+var Typography__default = /*#__PURE__*/ _interopDefaultLegacy(Typography)
+var TableCell__default = /*#__PURE__*/ _interopDefaultLegacy(TableCell)
+var TableRow__default = /*#__PURE__*/ _interopDefaultLegacy(TableRow)
+var TableHead__default = /*#__PURE__*/ _interopDefaultLegacy(TableHead)
+var Checkbox__default = /*#__PURE__*/ _interopDefaultLegacy(Checkbox)
+var TableSortLabel__default = /*#__PURE__*/ _interopDefaultLegacy(TableSortLabel)
+var IndeterminateCheckBoxIcon__default = /*#__PURE__*/ _interopDefaultLegacy(IndeterminateCheckBoxIcon)
 var axios__default = /*#__PURE__*/ _interopDefaultLegacy(axios)
 var createSagaMiddleware__default = /*#__PURE__*/ _interopDefaultLegacy(createSagaMiddleware)
 var i18n__default = /*#__PURE__*/ _interopDefaultLegacy(i18n)
@@ -83,18 +100,604 @@ var selectUser = reselect.createSelector(
   }
 )
 
-var FilesList = function () {
-  //   const classes = useStyles()
+var useStyles = core.makeStyles(function (theme) {
+  var _a, _b, _c
+  return core.createStyles({
+    root: {
+      marginTop: theme.spacing(4.8),
+    },
+    listHeader:
+      ((_a = {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: theme.spacing(0, 3),
+      }),
+      (_a[theme.breakpoints.down('sm')] = {
+        display: 'block',
+        padding: 0,
+      }),
+      _a),
+    filesDropZone: {
+      margin: '0 -2px',
+    },
+    selectedFiles:
+      ((_b = {}),
+      (_b[theme.breakpoints.down('sm')] = {
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        padding: theme.spacing(3),
+      }),
+      _b),
+    sortWrapper:
+      ((_c = {}),
+      (_c[theme.breakpoints.down('sm')] = {
+        justifyContent: 'space-between',
+        marginLeft: '-8px',
+        padding: theme.spacing(3),
+      }),
+      _c),
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+    },
+    changeViewBtn: {
+      padding: 0,
+      minWidth: 'inherit',
+    },
+    dialogContent: {
+      padding: '20px',
+    },
+  })
+})
+
+var useStyles$1 = core.makeStyles(function (theme) {
+  return core.createStyles({
+    empty: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      minHeight: '90px',
+      justifyContent: 'space-around',
+      padding: theme.spacing(2, 0),
+      outline: 'none',
+    },
+  })
+})
+
+var Empty = function (_a) {
+  var text = _a.text
+  var classes = useStyles$1()
   var t = reactI18next.useTranslation(['translation']).t
   return React__default['default'].createElement(
-    'div',
+    core.Box,
+    { className: classes.empty },
+    React__default['default'].createElement(ErrorOutlineIcon__default['default'], { color: 'secondary' }),
+    React__default['default'].createElement(
+      Typography__default['default'],
+      { variant: 'body1', color: 'secondary' },
+      text ? text : t('No data found')
+    )
+  )
+}
+var Empty$1 = React.memo(Empty)
+
+var useStyles$2 = core.makeStyles(function (theme) {
+  return core.createStyles({
+    root: {
+      width: '100%',
+    },
+    paper: {
+      width: '100%',
+      marginBottom: theme.spacing(2),
+    },
+    table: {
+      minWidth: 750,
+    },
+    visuallyHidden: {
+      border: 0,
+      clip: 'rect(0 0 0 0)',
+      height: 1,
+      margin: -1,
+      overflow: 'hidden',
+      padding: 0,
+      position: 'absolute',
+      top: 20,
+      width: 1,
+    },
+    indeterminateCheckBox: {
+      color: theme.palette.primary.main,
+    },
+  })
+})
+
+function TableHeader(props) {
+  var classes = useStyles$2()
+  var t = reactI18next.useTranslation().t
+  var onSelectAllClick = props.onSelectAllClick,
+    order = props.order,
+    orderBy = props.orderBy,
+    numSelected = props.numSelected,
+    rowCount = props.rowCount,
+    onRequestSort = props.onRequestSort,
+    headCells = props.headCells,
+    _a = props.hasSelected,
+    hasSelected = _a === void 0 ? true : _a
+  var createSortHandler = function (property) {
+    return function (event) {
+      onRequestSort && onRequestSort(event, property)
+    }
+  }
+  return React__default['default'].createElement(
+    TableHead__default['default'],
     null,
-    'Files list ',
-    t('mam:Are you sure you want to delete this file? All the users will lose access to this file')
+    React__default['default'].createElement(
+      TableRow__default['default'],
+      null,
+      hasSelected &&
+        React__default['default'].createElement(
+          TableCell__default['default'],
+          { padding: 'checkbox' },
+          React__default['default'].createElement(Checkbox__default['default'], {
+            indeterminate: numSelected > 0 && numSelected < rowCount,
+            indeterminateIcon: React__default['default'].createElement(IndeterminateCheckBoxIcon__default['default'], {
+              className: classes.indeterminateCheckBox,
+            }),
+            checked: numSelected !== 0 && (numSelected === rowCount || numSelected + 1 === rowCount),
+            onChange: onSelectAllClick,
+            color: 'primary',
+            inputProps: { 'aria-label': 'select all members' },
+          })
+        ),
+      headCells.map(function (headCell, index) {
+        return React__default['default'].createElement(
+          TableCell__default['default'],
+          {
+            key: headCell.id,
+            align: 'left',
+            padding: 'default',
+            style: !hasSelected && index === 0 ? { paddingLeft: '25px' } : {},
+            sortDirection: orderBy === headCell.id ? order : false,
+          },
+          React__default['default'].createElement(
+            TableSortLabel__default['default'],
+            {
+              active: orderBy === headCell.id,
+              direction: orderBy === headCell.id ? order : 'asc',
+              onClick: createSortHandler(headCell.id),
+            },
+            t('' + headCell.label),
+            orderBy === headCell.id
+              ? React__default['default'].createElement(
+                  'span',
+                  { className: classes.visuallyHidden },
+                  order === 'desc' ? 'sorted descending' : 'sorted ascending'
+                )
+              : null
+          )
+        )
+      })
+    )
   )
 }
 
-var useStyles = styles.makeStyles(function (theme) {
+var useStyles$3 = core.makeStyles(function (theme) {
+  return core.createStyles({
+    paperTable: {
+      width: '100%',
+      marginBottom: theme.spacing(2),
+    },
+  })
+})
+
+var TableComponent = function (_a) {
+  var rows = _a.rows,
+    headCells = _a.headCells,
+    rowsTemplate = _a.rowsTemplate,
+    tableState = _a.tableState,
+    onUpdatePageLimit = _a.onUpdatePageLimit,
+    onUpdateCurrentPage = _a.onUpdateCurrentPage,
+    _b = _a.totalRows,
+    totalRows = _b === void 0 ? 0 : _b,
+    selected = _a.selected,
+    setSelected = _a.setSelected,
+    page = _a.page,
+    setPage = _a.setPage,
+    _c = _a.hasSelected,
+    hasSelected = _c === void 0 ? false : _c,
+    clickRowHandler = _a.clickRowHandler,
+    _d = _a.idKey,
+    idKey = _d === void 0 ? 'id' : _d,
+    classContainer = _a.classContainer,
+    disableSelect = _a.disableSelect
+  var classes = useStyles$3()
+  var rowsPerPage = (tableState === null || tableState === void 0 ? void 0 : tableState.limit) || 10
+  var t = reactI18next.useTranslation(['translation']).t
+  var handleSelectAllClick = function (event) {
+    if (event.target.checked) {
+      var newSelected = rows
+        .map(function (n) {
+          return n[idKey]
+        })
+        .filter(function (selectedId) {
+          return selectedId !== disableSelect
+        })
+      setSelected(newSelected)
+      return
+    }
+    setSelected([])
+  }
+  // eslint-disable-next-line
+  var handleClick = function (event, name) {
+    if (clickRowHandler && event.target.dataset.table) {
+      clickRowHandler(name)
+      return
+    }
+    if (selected) {
+      var selectedIndex = selected.indexOf(name)
+      var newSelected = []
+      if (event.target.dataset.table || event.target.dataset.indeterminate) {
+        if (selectedIndex === -1) {
+          newSelected = newSelected.concat(selected, name)
+        } else if (selectedIndex === 0) {
+          newSelected = newSelected.concat(selected.slice(1))
+        } else if (selectedIndex === selected.length - 1) {
+          newSelected = newSelected.concat(selected.slice(0, -1))
+        } else if (selectedIndex > 0) {
+          newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1))
+        }
+        setSelected(newSelected)
+      }
+    }
+  }
+  var isSelected = function (name) {
+    return selected && selected.indexOf(name) !== -1
+  }
+  return React__default['default'].createElement(
+    core.Box,
+    { className: classes.paperTable },
+    !!rows &&
+      React__default['default'].createElement(
+        core.TableContainer,
+        { className: classContainer },
+        React__default['default'].createElement(
+          core.Table,
+          { 'aria-labelledby': 'tableTitle', size: 'medium', 'aria-label': 'role table' },
+          React__default['default'].createElement(TableHeader, {
+            numSelected: (selected === null || selected === void 0 ? void 0 : selected.length) || 0,
+            onSelectAllClick: handleSelectAllClick,
+            rowCount: rows ? rows.length : 0,
+            headCells: headCells,
+            hasSelected: hasSelected,
+          }),
+          React__default['default'].createElement(
+            core.TableBody,
+            null,
+            rows.length > 0 &&
+              // eslint-disable-next-line
+              rows.map(function (row, index) {
+                var isItemSelected = isSelected(row[idKey])
+                var labelId = 'enhanced-table-checkbox-' + index
+                return React__default['default'].createElement(
+                  core.TableRow,
+                  {
+                    hover: true,
+                    onClick: function (event) {
+                      return disableSelect !== row[idKey] && handleClick(event, row[idKey])
+                    },
+                    role: 'checkbox',
+                    'aria-checked': isItemSelected,
+                    tabIndex: -1,
+                    key: row[idKey] + '_' + index,
+                    selected: isItemSelected,
+                  },
+                  hasSelected &&
+                    React__default['default'].createElement(
+                      core.TableCell,
+                      { padding: 'checkbox', 'data-table': 'table-row' },
+                      React__default['default'].createElement(core.Checkbox, {
+                        checked: isItemSelected,
+                        inputProps: { 'aria-labelledby': labelId },
+                        color: 'primary',
+                        disabled: disableSelect === row[idKey],
+                      })
+                    ),
+                  rowsTemplate(row)
+                )
+              })
+          )
+        )
+      ),
+    !!rows && rows.length > 0
+      ? React__default['default'].createElement(core.TablePagination, {
+          rowsPerPageOptions: [10, 20, 50, 100],
+          component: 'div',
+          count: totalRows,
+          rowsPerPage: rowsPerPage,
+          page: page,
+          onChangePage: function (e, page) {
+            setPage && setPage(page)
+            onUpdateCurrentPage(page)
+          },
+          onChangeRowsPerPage: function (event) {
+            return onUpdatePageLimit(parseInt(event.target.value, 10))
+          },
+          backIconButtonProps: { size: 'small' },
+          nextIconButtonProps: { size: 'small' },
+          labelRowsPerPage: t('translation:Rows per page'),
+          labelDisplayedRows: function (_a) {
+            var from = _a.from,
+              to = _a.to,
+              count = _a.count
+            return t('translation:' + from + '-' + to + ' of ' + (count !== -1 ? count : to))
+          },
+        })
+      : React__default['default'].createElement(Empty$1, { text: t('No data found') })
+  )
+}
+
+var projectFields = [
+  { id: 'preview', label: 'Preview' },
+  { id: 'name', label: 'Name' },
+  { id: 'date', label: 'Created' },
+  { id: 'creator', label: 'Author' },
+  { id: 'size', label: 'Size' },
+  { id: 'actions', label: 'Actions' },
+]
+
+var useStyles$4 = core.makeStyles(function (theme) {
+  return core.createStyles({
+    projectDetailsTable: {
+      width: '100%',
+      '& tr': {
+        cursor: 'pointer',
+      },
+    },
+    videoPreview: {
+      position: 'relative',
+      maxWidth: '80px',
+      pointerEvents: 'none',
+    },
+    cellData: {
+      pointerEvents: 'none',
+    },
+    cellText: {
+      maxWidth: '250px',
+    },
+    versionIcon: {
+      width: '24px',
+      height: '24px',
+      borderRadius: '3px',
+      border: 'solid 1px',
+      borderColor: theme.custom.borderTimeLine,
+      backgroundColor: theme.custom.mainBg,
+      '& p': {
+        fontWeight: 500,
+        fontSize: '12px',
+      },
+    },
+  })
+})
+
+var useStyles$5 = core.makeStyles(function () {
+  return core.createStyles({
+    videoPreview: {
+      position: 'relative',
+      width: '80px',
+      height: '45px',
+      pointerEvents: 'none',
+    },
+    badge: {
+      position: 'absolute',
+      right: 5,
+      top: 8,
+      display: 'flex',
+      textAlign: 'center',
+    },
+    circle: {
+      width: 10,
+      height: 10,
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      color: '#fff',
+      borderRadius: '50%',
+      display: 'flex',
+      alignItems: 'center',
+      '& svg': {
+        width: '10px',
+      },
+    },
+    noStatus: {
+      color: '#666666',
+    },
+    needsReviewStatus: {
+      color: '#ffbf00',
+    },
+    inProgressStatus: {
+      color: '#227dff',
+    },
+    approvedStatus: {
+      color: '#1dcfbb',
+    },
+    status: {
+      fontSize: 5,
+      fontWeight: 500,
+      minWidth: '37px',
+      padding: 2,
+      borderRadius: 3,
+      color: '#fff',
+      marginLeft: '10px',
+      '&$needsReviewStatus': {
+        backgroundColor: '#ffbf00',
+      },
+      '&$inProgressStatus': {
+        backgroundColor: '#227dff',
+      },
+      '&$approvedStatus': {
+        backgroundColor: '#1dcfbb',
+      },
+    },
+    previewImg: {
+      objectFit: 'cover',
+    },
+  })
+})
+
+var baseURL = process.env.REACT_APP_BASE_URL
+var mamWS = process.env.REACT_APP_MAM_WS
+var appConfig = {
+  locizeProjectId: 'ae7ef3b6-10dd-4668-a415-1456b04d39da',
+  locizeApiKey: '22445f1f-f5c8-4d4a-92c3-f205afb14370',
+  services: {
+    // Spaces
+    user: '/user',
+    space: '/space/space',
+    memberInfo: '/space/space/member',
+    getUserAvatar: function (file) {
+      return '/space/space/member/logo/' + file
+    },
+    getFilePreview: function (thumbnail_url) {
+      return baseURL + '/storage' + thumbnail_url
+    },
+  },
+}
+
+var MobilePreview = function (props) {
+  var data = props.data
+  var classes = useStyles$5()
+  return React__default['default'].createElement(
+    core.Box,
+    { className: classes.videoPreview },
+    React__default['default'].createElement('img', {
+      src: appConfig.services.getFilePreview(data.thumbnail_url),
+      className: classes.previewImg,
+      alt: data.name,
+    })
+  )
+}
+
+var TableView = function () {
+  var classes = useStyles$4()
+  return React.createElement(
+    core.Box,
+    { className: classes.projectDetailsTable },
+    React.createElement(TableComponent, {
+      idKey: 'file_id',
+      totalRows: 0,
+      page: 1,
+      rows: [],
+      hasSelected: true,
+      clickRowHandler: function (fileId) {
+        return console.log('click')
+      },
+      headCells: projectFields,
+      onUpdateCurrentPage: function () {
+        return console.log('on change')
+      },
+      onUpdatePageLimit: function () {
+        return console.log('update limit')
+      },
+      // selected={selected}
+      setSelected: function () {
+        return console.log('select handle')
+      },
+      rowsTemplate: function (row) {
+        return React.createElement(
+          React.Fragment,
+          null,
+          React.createElement(
+            core.TableCell,
+            { align: 'left', 'data-table': 'table-row' },
+            React.createElement(MobilePreview, { data: row })
+          ),
+          React.createElement(
+            core.TableCell,
+            { align: 'left', 'data-table': 'table-row' },
+            React.createElement(
+              core.Box,
+              { display: 'flex', alignItems: 'center', className: classes.cellData },
+              React.createElement(core.Box, { mr: 2, display: 'inline-flex' }),
+              React.createElement(core.Typography, { noWrap: true, className: classes.cellText })
+            )
+          ),
+          React.createElement(
+            core.TableCell,
+            { align: 'left', 'data-table': 'table-row' },
+            React.createElement(core.Typography, { variant: 'body1', className: classes.cellData })
+          ),
+          React.createElement(
+            core.TableCell,
+            { align: 'left', 'data-table': 'table-row' },
+            React.createElement(
+              core.Box,
+              { display: 'flex', alignItems: 'center', my: 0.5, className: classes.cellData },
+              React.createElement(core.Box, { mr: 1 }),
+              React.createElement(
+                core.Typography,
+                { noWrap: true, className: classes.cellText },
+                row.upload_by.firstname + ' ' + row.upload_by.lastname
+              )
+            )
+          ),
+          React.createElement(
+            core.TableCell,
+            { align: 'left', 'data-table': 'table-row' },
+            React.createElement(
+              core.Typography,
+              { variant: 'body1', component: 'div', noWrap: true },
+              React.createElement(core.Box, { mr: 1, display: 'inline-flex', className: classes.cellData }, row.size),
+              'KB'
+            )
+          )
+        )
+      },
+    })
+  )
+}
+
+var FilesList = function () {
+  var classes = useStyles()
+  var t = reactI18next.useTranslation(['translation']).t
+  var _a = React.useState(true),
+    tableView = _a[0],
+    setTableView = _a[1]
+  return React__default['default'].createElement(
+    'div',
+    null,
+    React__default['default'].createElement(
+      core.Box,
+      { className: classes.root },
+      React__default['default'].createElement(
+        core.Paper,
+        { elevation: 2 },
+        React__default['default'].createElement(
+          core.Box,
+          { className: classes.listHeader, id: 'listHeader' },
+          React__default['default'].createElement(
+            core.Box,
+            { display: 'flex', alignItems: 'center', className: classes.selectedFiles },
+            React__default['default'].createElement(
+              core.Box,
+              { mr: 1 },
+              React__default['default'].createElement(
+                core.Typography,
+                { variant: 'h4', id: 'files' },
+                t('translation:Files')
+              )
+            ),
+            React__default['default'].createElement(
+              core.Typography,
+              { color: 'textSecondary', id: 'filesSelected' },
+              t('translation:(0 of 0 selected)', { value: 0, amount: 0 })
+            )
+          )
+        ),
+        React__default['default'].createElement(TableView, null)
+      )
+    )
+  )
+}
+
+var useStyles$6 = styles.makeStyles(function (theme) {
   var _a
   return styles.createStyles({
     root:
@@ -115,7 +718,7 @@ var useStyles = styles.makeStyles(function (theme) {
 
 var ProjectDetails = function () {
   var user = reactRedux.useSelector(selectUser).user
-  var classes = useStyles()
+  var classes = useStyles$6()
   var dispatch = reactRedux.useDispatch()
   React.useEffect(function () {
     dispatch(getUserDataRequest())
@@ -17646,22 +18249,6 @@ var lodash = createCommonjsModule(function (module, exports) {
     }
   }.call(commonjsGlobal))
 })
-
-var baseURL = process.env.REACT_APP_BASE_URL
-var mamWS = process.env.REACT_APP_MAM_WS
-var appConfig = {
-  locizeProjectId: 'ae7ef3b6-10dd-4668-a415-1456b04d39da',
-  locizeApiKey: '22445f1f-f5c8-4d4a-92c3-f205afb14370',
-  services: {
-    // Spaces
-    user: '/user',
-    space: '/space/space',
-    memberInfo: '/space/space/member',
-    getUserAvatar: function (file) {
-      return '/space/space/member/logo/' + file
-    },
-  },
-}
 
 var baseURL$1 = process.env.REACT_APP_BASE_URL
 function apiMiddleware(_a) {
