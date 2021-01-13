@@ -1,30 +1,36 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-// import { Box, Paper, Divider, Typography, Button } from '@material-ui/core'
-// import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted'
-// import ViewModuleIcon from '@material-ui/icons/ViewModule'
-// import FilesActions from 'stores/reducers/files'
-// import { IFilesListProps } from './types'
-// import { useStyles } from './styles'
-// import SortSelect from 'common/SortSelect'
-// import UploadFiles from '../UploadFiles'
-// import TableView from '../TableView'
-// import TableMobileView from '../TableMobileView'
-// import CardView from '../CardView'
-// import { ShareLinkPopUp } from '../ShareLinkPopUp'
-// import { getFilesDataSelector, getSharedLinkId } from 'stores/selectors/files'
-// import { useParams } from 'react-router-dom'
+import { Box, Paper, Typography } from '@material-ui/core'
+import { useStyles } from './styles'
 import { Theme } from '@material-ui/core/styles'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
+import TableView from '../TableView'
 
 const FilesList = () => {
-  //   const classes = useStyles()
+  const classes = useStyles()
   const { t } = useTranslation(['translation'])
+  const [tableView, setTableView] = useState(true)
 
   return (
     <div>
-      Files list {t('mam:Are you sure you want to delete this file? All the users will lose access to this file')}
+      <Box className={classes.root}>
+        <Paper elevation={2}>
+          <Box className={classes.listHeader} id="listHeader">
+            <Box display="flex" alignItems="center" className={classes.selectedFiles}>
+              <Box mr={1}>
+                <Typography variant="h4" id="files">
+                  {t('translation:Files')}
+                </Typography>
+              </Box>
+              <Typography color="textSecondary" id="filesSelected">
+                {t('translation:(0 of 0 selected)', { value: 0, amount: 0 })}
+              </Typography>
+            </Box>
+          </Box>
+          <TableView />
+        </Paper>
+      </Box>
     </div>
   )
 }

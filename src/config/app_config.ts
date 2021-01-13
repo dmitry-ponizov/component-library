@@ -11,5 +11,6 @@ export default {
     space: '/space/space',
     memberInfo: '/space/space/member',
     getUserAvatar: (file: string) => `/space/space/member/logo/${file}`,
+    getFilePreview: (thumbnail_url: string) => `${baseURL}/storage${thumbnail_url}`,
   },
 }
