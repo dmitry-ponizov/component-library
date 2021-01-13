@@ -133,7 +133,7 @@ interface IApi {
   context: unknown;
   fn: (this: unknown, ...args: any[]) => any;
 }
-export function* getUserData(api: any) {
+export function* getUserData(api: IApi) {
   try {
     const { data } = yield call(api, {
       url: "/user",

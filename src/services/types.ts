@@ -1,5 +1,4 @@
-import { Method } from "axios";
-
+import { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 export interface IApiMiddleware {
   url: string;
   method: Method;
@@ -15,7 +14,16 @@ export interface IError extends Error {
   response: string;
 }
 
-export interface IApi {
-  context: unknown;
-  fn: (this: unknown, ...args: any[]) => any;
+export interface IApiRequestConfig
+  extends Pick<AxiosRequestConfig, "url" | "method" | "data" | "headers"> {
+  transform?: boolean;
+}
+type TResponse<T> = Promise<AxiosResponse<T>["data"]>;
+type TConfig<T extends IApiRequestConfig> = IApiRequestConfig & T;
+
+export interface IApi<
+  C extends IApiRequestConfig = IApiRequestConfig,
+  R = any
+> {
+  (config?: TConfig<C>): TResponse<R>;
 }
