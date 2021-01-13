@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getUserDataRequest } from '../../../store/redux-toolkit'
+import { getUserDataRequest } from '../../../store/reducers/user'
 import { selectUser } from '../../../store/selectors/user'
 
 const ProjectDetails = () => {
