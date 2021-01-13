@@ -17723,20 +17723,7 @@ function configStore() {
     reducer: rootReducer,
     middleware: middleware,
   })
-  var sagasManager = sagaMiddleware.run(root)
-  if (process.env.NODE_ENV !== 'production' && module.hot) {
-    module.hot.accept(function () {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-      var nextRootReducer = require('./reducers')
-      store.replaceReducer(nextRootReducer)
-      // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-      var newYieldedSagas = require('./sagas').default
-      sagasManager.cancel()
-      sagasManager.toPromise().then(function () {
-        sagasManager = sagaMiddleware.run(newYieldedSagas)
-      })
-    })
-  }
+  sagaMiddleware.run(root)
   return store
 }
 

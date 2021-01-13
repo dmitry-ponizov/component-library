@@ -12,22 +12,7 @@ export default function configStore() {
     middleware,
   })
 
-  let sagasManager = sagaMiddleware.run(rootSaga)
-
-  if (process.env.NODE_ENV !== 'production' && module.hot) {
-    module.hot.accept(() => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-      const nextRootReducer = require('./reducers')
-      store.replaceReducer(nextRootReducer)
-
-      // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-      const newYieldedSagas = require('./sagas').default
-      sagasManager.cancel()
-      sagasManager.toPromise().then(() => {
-        sagasManager = sagaMiddleware.run(newYieldedSagas)
-      })
-    })
-  }
+  sagaMiddleware.run(rootSaga)
 
   return store
 }
