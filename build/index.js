@@ -3,13 +3,19 @@
 Object.defineProperty(exports, '__esModule', { value: true })
 
 var React = require('react')
-var styles = require('@material-ui/core/styles')
 var reactRedux = require('react-redux')
 var toolkit = require('@reduxjs/toolkit')
 var reselect = require('reselect')
+var reactI18next = require('react-i18next')
+var styles = require('@material-ui/core/styles')
 var effects = require('redux-saga/effects')
 var axios = require('axios')
 var createSagaMiddleware = require('redux-saga')
+var i18n = require('i18next')
+var LanguageDetector = require('i18next-browser-languagedetector')
+var Backend = require('i18next-locize-backend')
+var LastUsed = require('locize-lastused')
+var Editor = require('locize-editor')
 
 function _interopDefaultLegacy(e) {
   return e && typeof e === 'object' && 'default' in e ? e : { default: e }
@@ -18,25 +24,11 @@ function _interopDefaultLegacy(e) {
 var React__default = /*#__PURE__*/ _interopDefaultLegacy(React)
 var axios__default = /*#__PURE__*/ _interopDefaultLegacy(axios)
 var createSagaMiddleware__default = /*#__PURE__*/ _interopDefaultLegacy(createSagaMiddleware)
-
-var useStyles = styles.makeStyles(function (theme) {
-  var _a
-  return styles.createStyles({
-    root:
-      ((_a = {
-        display: 'flex',
-        flexDirection: 'column',
-        padding: theme.spacing(4.8),
-        width: '100%',
-        maxWidth: '100%',
-        backgroundColor: theme.custom.mainBg,
-      }),
-      (_a[theme.breakpoints.down('sm')] = {
-        padding: theme.spacing(3),
-      }),
-      _a),
-  })
-})
+var i18n__default = /*#__PURE__*/ _interopDefaultLegacy(i18n)
+var LanguageDetector__default = /*#__PURE__*/ _interopDefaultLegacy(LanguageDetector)
+var Backend__default = /*#__PURE__*/ _interopDefaultLegacy(Backend)
+var LastUsed__default = /*#__PURE__*/ _interopDefaultLegacy(LastUsed)
+var Editor__default = /*#__PURE__*/ _interopDefaultLegacy(Editor)
 
 var _a
 var initialState = {
@@ -51,8 +43,8 @@ var initialState = {
   error: '',
   user: {
     user_id: '',
-    firstname: 'Dima',
-    lastname: 'Ponizov',
+    firstname: '',
+    lastname: '',
     email: '',
     is_staff_manager: false,
     error: '',
@@ -91,17 +83,47 @@ var selectUser = reselect.createSelector(
   }
 )
 
+var FilesList = function () {
+  //   const classes = useStyles()
+  var t = reactI18next.useTranslation(['translation']).t
+  return React__default['default'].createElement(
+    'div',
+    null,
+    'Files list ',
+    t('mam:Are you sure you want to delete this file? All the users will lose access to this file')
+  )
+}
+
+var useStyles = styles.makeStyles(function (theme) {
+  var _a
+  return styles.createStyles({
+    root:
+      ((_a = {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: theme.spacing(4.8),
+        width: '100%',
+        maxWidth: '100%',
+        backgroundColor: theme.custom.mainBg,
+      }),
+      (_a[theme.breakpoints.down('sm')] = {
+        padding: theme.spacing(3),
+      }),
+      _a),
+  })
+})
+
 var ProjectDetails = function () {
   var user = reactRedux.useSelector(selectUser).user
+  var classes = useStyles()
   var dispatch = reactRedux.useDispatch()
   React.useEffect(function () {
     dispatch(getUserDataRequest())
   }, [])
   return React__default['default'].createElement(
-    'div',
-    null,
-    'Hello from project details component ----- ',
-    user.firstname + ' ' + user.lastname + ' '
+    'section',
+    { className: classes.root, id: 'mainAuth' },
+    React__default['default'].createElement(FilesList, null)
   )
 }
 
@@ -131,6 +153,36 @@ var __assign = function () {
       return t
     }
   return __assign.apply(this, arguments)
+}
+
+function __awaiter(thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P
+      ? value
+      : new P(function (resolve) {
+          resolve(value)
+        })
+  }
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value))
+      } catch (e) {
+        reject(e)
+      }
+    }
+    function rejected(value) {
+      try {
+        step(generator['throw'](value))
+      } catch (e) {
+        reject(e)
+      }
+    }
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected)
+    }
+    step((generator = generator.apply(thisArg, _arguments || [])).next())
+  })
 }
 
 function __generator(thisArg, body) {
@@ -17597,7 +17649,7 @@ var lodash = createCommonjsModule(function (module, exports) {
 
 var baseURL = process.env.REACT_APP_BASE_URL
 var mamWS = process.env.REACT_APP_MAM_WS
-var app_config = {
+var appConfig = {
   locizeProjectId: 'ae7ef3b6-10dd-4668-a415-1456b04d39da',
   locizeApiKey: '22445f1f-f5c8-4d4a-92c3-f205afb14370',
   services: {
@@ -17671,7 +17723,7 @@ function getUserData(api) {
         return [
           4 /*yield*/,
           effects.call(api, {
-            url: app_config.services.user,
+            url: appConfig.services.user,
           }),
         ]
       case 1:
@@ -17722,23 +17774,94 @@ function configStore() {
   var store = toolkit.configureStore({
     reducer: rootReducer,
     middleware: middleware,
+    devTools: true,
   })
   sagaMiddleware.run(root)
   return store
 }
 
+var LangProvider = function (_a) {
+  var children = _a.children
+  return React__default['default'].createElement(React.Suspense, { fallback: null }, children)
+}
+
+var locizeOptions = {
+  projectId: appConfig.locizeProjectId,
+  apiKey: appConfig.locizeApiKey,
+  referenceLng: 'en',
+}
+i18n__default['default']
+  // i18next-locize-backend
+  // loads translations from your project, saves new keys to it (saveMissing: true)
+  // https://github.com/locize/i18next-locize-backend
+  .use(Backend__default['default'])
+  // locize-lastused
+  // sets a timestamp of last access on every translation segment on locize
+  // -> safely remove the ones not being touched for weeks/months
+  // https://github.com/locize/locize-lastused
+  .use(LastUsed__default['default'])
+  // locize-editor
+  // InContext Editor of locize ?locize=true to show it
+  // https://github.com/locize/locize-editor
+  .use(Editor__default['default'])
+  // detect user language
+  // learn more: https://github.com/i18next/i18next-browser-languageDetector
+  .use(LanguageDetector__default['default'])
+  // pass the i18n instance to react-i18next.
+  .use(reactI18next.initReactI18next)
+  // init i18next
+  // for all options read: https://www.i18next.com/overview/configuration-options
+  .init({
+    // lng: 'en',
+    fallbackLng: 'en',
+    debug: false,
+    saveMissing: true,
+    ns: ['translation', 'mam', 'communication'],
+    interpolation: {
+      escapeValue: false,
+    },
+    whitelist: ['de', 'en'],
+    detection: {
+      checkForSimilarInWhitelist: true,
+    },
+    backend: locizeOptions,
+    locizeLastUsed: locizeOptions,
+    editor: __assign(__assign({}, locizeOptions), {
+      onEditorSaved: function (lng, ns) {
+        return __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                // reload that namespace in given language
+                return [
+                  4 /*yield*/,
+                  i18n__default['default'].reloadResources(lng, ns),
+                  // trigger an event on i18n which triggers a rerender
+                  // based on bindI18n below in react options
+                ]
+              case 1:
+                // reload that namespace in given language
+                _a.sent()
+                // trigger an event on i18n which triggers a rerender
+                // based on bindI18n below in react options
+                i18n__default['default'].emit('editorSaved')
+                return [2 /*return*/]
+            }
+          })
+        })
+      },
+    }),
+    react: {
+      bindI18n: 'languageChanged editorSaved',
+    },
+  })
+
 var store = configStore()
 var DocumentAssetManagement = function () {
-  var classes = useStyles()
   return React.createElement(
     reactRedux.Provider,
     { store: store },
-    React.createElement(
-      'section',
-      { className: classes.root, id: 'mainAuth' },
-      'Hello from DAM',
-      React.createElement(ProjectDetails, null)
-    )
+    React.createElement(LangProvider, null, React.createElement(ProjectDetails, null))
   )
 }
 

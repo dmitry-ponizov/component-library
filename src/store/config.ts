@@ -10,6 +10,7 @@ export default function configStore() {
   const store = configureStore({
     reducer: rootReducer,
     middleware,
+    devTools: true,
   })
 
   sagaMiddleware.run(rootSaga)

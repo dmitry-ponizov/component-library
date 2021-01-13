@@ -13,8 +13,8 @@ const initialState: IUserState = {
   error: '',
   user: {
     user_id: '',
-    firstname: 'Dima',
-    lastname: 'Ponizov',
+    firstname: '',
+    lastname: '',
     email: '',
     is_staff_manager: false,
     error: '',
