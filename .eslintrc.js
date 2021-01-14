@@ -19,6 +19,7 @@ module.exports = {
     '@typescript-eslint/ban-types': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
   },
   settings: {
     react: {
